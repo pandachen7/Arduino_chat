@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 
-SoftwareSerial uartSerial(2, 4);
+SoftwareSerial uartSerial(2, 4);// arduino's RX, TX, can be digital pin
 
 LoRaTx::LoRaTx(void){
-	//uartSerial = new SoftwareSerial(2, 4); // arduino's RX, TX, can be digital pin
+	//uartSerial = new SoftwareSerial(2, 4); 
 	uartSerial.begin(9600);
 	
 }
@@ -13,8 +13,8 @@ LoRaTx::LoRaTx(void){
 void LoRaTx::sendString(const char* _str){
 	uartSerial.write(_str);
 }
-void LoRaTx::sendBytes(const uint8_t* _byte){
-	uartSerial.write(_byte, sizeof(_byte));
+void LoRaTx::sendBytes(const uint8_t* _byte, int _size){
+	uartSerial.write(_byte, _size);
 }
 
 void LoRaTx::setAddrChannel(const uint8_t* _byte){
@@ -33,7 +33,7 @@ void LoRaTx::setDefaultAddrChannel(){
 	addrCh[1] = 0;
 	addrCh[2] = 23;
 }
-void LoRaTx::sendAddrCh(){
+void LoRaTx::sendAddrChannel(){
 	uartSerial.write(addrCh, sizeof(addrCh));
 }
 
@@ -41,8 +41,8 @@ void LoRaTx::setData(const char * _str){
 	//bufferData[0] = 0;
 	//strncat(bufferData, _str, MAX_DATA_SIZE);
 
-	strncpy(bufferData, _str, MAX_DATA_SIZE);
-	bufferData[MAX_DATA_SIZE] = '\0';
+	strncpy(bufferData, _str, sizeof(bufferData));
+	bufferData[sizeof(bufferData)] = '\0';
 }
 char * LoRaTx::getData(){
 	return bufferData;

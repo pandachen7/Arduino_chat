@@ -2,7 +2,7 @@
 #define LoRaTx_h
 #include <SoftwareSerial.h>
 
-#define MAX_DATA_SIZE 30
+#define MAX_DATA_SIZE 6
 
 class LoRaTx
 {
@@ -10,12 +10,12 @@ class LoRaTx
   public:
 	LoRaTx(void);
 	void sendString(const char*);
-	void sendBytes(const uint8_t*);
+	void sendBytes(const uint8_t*, int);
 	
 	void setAddrChannel(const uint8_t*);
 	void getAddrChannel(uint8_t*);
 	void setDefaultAddrChannel();
-	void sendAddrCh();
+	void sendAddrChannel();
 	
 	void setData(const char*);
 	char* getData();
