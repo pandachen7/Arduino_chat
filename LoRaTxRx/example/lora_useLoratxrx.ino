@@ -2,8 +2,7 @@
 
 #include <LoRaTxRx.h>
 
-LoRaTxRx mylora;
-String receivedString;
+LoRaTxRx myLora;
 
 void setup() {
   Serial.begin(115200);
@@ -12,17 +11,17 @@ void setup() {
   }
 
   uint8_t addrCh[] = {0, 0, 23};
-  mylora.setAddrChannel(addrCh);
-  mylora.sendAddrChannel();
+  myLora.setAddrChannel(addrCh);
+  myLora.sendAddrChannel();
     
   char myString[] = "directly sending";
-  mylora.sendString(myString);
+  myLora.sendString(myString);
   Serial.write("You just send \"");
   Serial.write(myString);
   Serial.write("\"\n");
 
   uint8_t myBytes[] = {49, 50, 51, 52, 53, 0};
-  mylora.sendBytes(myBytes, sizeof(myBytes));
+  myLora.sendBytes(myBytes, sizeof(myBytes));
   Serial.write("You just send \"");
   Serial.write(myBytes, sizeof(myBytes));
   Serial.write("\"\n");
@@ -30,26 +29,28 @@ void setup() {
 
 void loop() {
 
-  if(mylora.receivedFlag()){
-    Serial.print(mylora.receiveDataToString());
+  if(myLora.available() > 0){
+
+    String receivedString = myLora.receiveDataToString();
+    //*  handle it
+    if(receivedString.equals("haha uccu")){
+      //write your case here
+      Serial.println("Jackpot!");
+    }else{
+      //write your case here
+      Serial.println(myLora.receiveDataToString());
+    }
+    //*/
+    
   }
-//  receivedString = mylora.receiveDataToString();
-//  if(!receivedString.equals("")){
-//    Serial.print(receivedString);
-//  }
 
-//  if(mylora.receivedFlag()){
-//    myStr = mylora.receiveDataToString();
-//    if(!myStr.equals("")){
-//      Serial.println(myStr);
-//    }
+  
+//  if(myLora.available() > 15){ //if receive N characters (bytes), then
+//    delay(100);//wating for remain message, but not a good method
+//    byte *charIndex = myLora.receiveData();
+//    Serial.write(charIndex, myLora.getReceiveDataLength);
+//    myLora.flushData();
 //  }
-
-//  
-//  if(){
-//    Serial.println(receiveData);
-//    receiveData[0] = 0;
-//  }
-
-  delay(100);
+  
+  delay(200);
 }
