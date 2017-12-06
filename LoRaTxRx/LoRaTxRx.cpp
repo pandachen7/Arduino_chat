@@ -7,32 +7,34 @@ SoftwareSerial uartSerial(2, 4);// arduino's RX, TX, can be digital pin
 LoRaTxRx::LoRaTxRx(void){
 	uartSerial.begin(9600);
 	
-	//default
-	//maxReceivedSize = 30;
-	//receivedMsg = (char*)malloc(sizeof(char)*31);
+	//default: 30
+	maxReceivedSize = 30;
+	receivedMsg = (byte*)malloc(sizeof(byte)*31);
 
 }
 LoRaTxRx::LoRaTxRx(int _maxReceivedSize){
 	uartSerial.begin(9600);
 	
-	//maxReceivedSize = _maxReceivedSize - 1;
-	//receivedMsg = (char*)malloc(sizeof(char)*_maxReceivedSize);
+	maxReceivedSize = _maxReceivedSize;
+	receivedMsg = (byte*)malloc(sizeof(byte)*_maxReceivedSize + 1);
 }
-
-void LoRaTxRx::sendString(const char* _str){
+void LoRaTxRx::sendString(String _str){
+	uartSerial.print(_str);
+}
+void LoRaTxRx::sendChars(const char* _str){
 	uartSerial.write(_str);
 }
-void LoRaTxRx::sendBytes(const uint8_t* _byte, int _size){
+void LoRaTxRx::sendBytes(const byte* _byte, int _size){
 	uartSerial.write(_byte, _size);
 }
 
-void LoRaTxRx::setAddrChannel(const uint8_t* _byte){
+void LoRaTxRx::setAddrChannel(const byte* _byte){
 	for (int i = 0; i < 3; i++){
 		addrCh[i] = _byte[i];
 	}
 }
 
-void LoRaTxRx::getAddrChannel(uint8_t* _byte){
+void LoRaTxRx::getAddrChannel(byte* _byte){
 	for (int i = 0; i < 3; i++){
 		_byte[i] = addrCh[i];
 	}
@@ -45,73 +47,48 @@ void LoRaTxRx::setDefaultAddrChannel(){
 void LoRaTxRx::sendAddrChannel(){
 	uartSerial.write(addrCh, sizeof(addrCh));
 }
-/*
-char LoRaTxRx::receiveChar(){
-	return uartSerial.read();
-}
-bool LoRaTxRx::receiveData(char * _str){
 
-	while(uartSerial.available() && receiveLength < maxReceivedSize){
-		receivedChar = uartSerial.read();
-		
-		receivedMsg[receiveLength++] = receivedChar;
-		
+byte * LoRaTxRx::receiveData(){//byte * _str){
+	byte receivedOne;
+	while(uartSerial.available() > 0 && receiveLength < maxReceivedSize){
+		receivedOne = uartSerial.read();
+		/*if (receivedOne == '\0'){
+			break;
+		}*/
+		receivedMsg[receiveLength++] = receivedOne;
 	}
 	
-	if(receivedChar != '\0'){
-		//last is not '\0' (Ending)
-		return false;
+	/*
+	if(receivedOne != '\0'){
+		//last is not '\0', must wait for remain message
+		return 0;
+	}*/
+	
+	//_str = receivedMsg;
+	//strncpy(_str, receivedMsg, sizeof(receivedMsg));
+	
+	//receiveLength = 0;
+	//receivedMsg[0] = '\0';
+	
+	return receivedMsg;
+}
+int LoRaTxRx::getReceiveDataLength(){
+	return receiveLength;
+}
+byte * LoRaTxRx::getReceiveDataIndex(){
+	return receivedMsg;
+}
+void LoRaTxRx::flushData(){
+	while(uartSerial.available() > 0){
+		uartSerial.read();
 	}
-	
-	strncpy(_str, receivedMsg, sizeof(receivedMsg));
-	
 	receiveLength = 0;
 	receivedMsg[0] = '\0';
-	
-	return true;
+}
+int LoRaTxRx::available(){
+	return uartSerial.available();
 }
 
 String LoRaTxRx::receiveDataToString(){
-	readString = "";
-	while(uartSerial.available()){
-		receivedChar = uartSerial.read();
-		if (receivedChar == '\0'){
-			break;
-		}
-		readString += receivedChar;
-	}
-	
-	if(receivedChar != '\0'){
-		return "";
-	}
-	
-	return readString;
-}
-*/
-bool LoRaTxRx::receivedFlag(){
-	return uartSerial.available() > 0;
-}
-String LoRaTxRx::receiveDataToString(){
-	
-	//if(uartSerial.available() > 0){
-		
-		//readString = uartSerial.readString();
-		
-		return uartSerial.readString();
-	//}
-	
-	//return "";
-}
-void LoRaTxRx::setData(const char * _str){
-	//bufferData[0] = 0;
-	//strncat(bufferData, _str, MAX_DATA_SIZE);
-
-	strncpy(bufferData, _str, sizeof(bufferData));
-	bufferData[sizeof(bufferData)] = '\0';
-}
-char * LoRaTxRx::getData(){
-	return bufferData;
-}
-void LoRaTxRx::sendData(){
-	uartSerial.write(bufferData);
+	return uartSerial.readString();
 }

@@ -2,7 +2,7 @@
 #define LoRaTxRx_h
 #include <SoftwareSerial.h>
 
-#define MAX_DATA_SIZE 30
+typedef unsigned char byte;
 
 class LoRaTxRx
 {
@@ -10,38 +10,29 @@ class LoRaTxRx
   public:
 	LoRaTxRx(void);
 	LoRaTxRx(int);
-	void sendString(const char*);
-	void sendBytes(const uint8_t*, int);
+	void sendString(const String);
+	void sendChars(const char*);
+	void sendBytes(const byte*, int);
 	
-	void setAddrChannel(const uint8_t*);
-	void getAddrChannel(uint8_t*);
+	void setAddrChannel(const byte*);
+	void getAddrChannel(byte*);
 	void setDefaultAddrChannel();
 	void sendAddrChannel();
 	
-	/*
-	char receiveChar();
-	bool receiveData(char*);
+	byte* receiveData();//byte*);
+	int getReceiveDataLength();
+	byte* getReceiveDataIndex();
+	void flushData();
+	int available();
 	
-	*/
-	bool receivedFlag();
 	String receiveDataToString();
-	
-	void setData(const char*);
-	char* getData();
-	void sendData();
-	
-	
-	
+		
   private:
-  	uint8_t addrCh[3];//addr x 2, channel x 1
-	//int maxReceivedSize, receiveLength;
-	//char *receivedMsg;
-	//char receivedChar;
+  	byte addrCh[3];//addr x 2, channel x 1
+	int maxReceivedSize, receiveLength;
+	byte *receivedMsg;
 	String readString;
-	
-	char bufferData[MAX_DATA_SIZE + 1];
 
-    //int st; 2 bytes on Uno
 };
 
 #endif
