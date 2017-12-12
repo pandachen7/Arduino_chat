@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-SoftwareSerial uartSerial(2, 4);// arduino's RX, TX, can be digital pin
+SoftwareSerial uartSerial(11, 10);// arduino's RX, TX, can be digital pin
 
 LoRaTxRx::LoRaTxRx(void){
 	uartSerial.begin(9600);
@@ -21,7 +21,7 @@ LoRaTxRx::LoRaTxRx(int _maxReceivedSize){
 void LoRaTxRx::sendString(String _str){
 	uartSerial.print(_str);
 }
-void LoRaTxRx::sendChars(const char* _str){
+void LoRaTxRx::sendString(const char* _str){
 	uartSerial.write(_str);
 }
 void LoRaTxRx::sendBytes(const byte* _byte, int _size){
