@@ -11,7 +11,7 @@ class LoRaTxRx
 	LoRaTxRx(void);
 	LoRaTxRx(int);
 	void sendString(const String);
-	void sendChars(const char*);
+	void sendString(const char*);
 	void sendBytes(const byte*, int);
 	
 	void setAddrChannel(const byte*);
